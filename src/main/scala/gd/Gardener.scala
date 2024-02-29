@@ -11,7 +11,11 @@ object Gardener extends ZIOAppDefault:
         routes.handleErrorCause { error =>
           println(s"Error: ${error}")
           // TODO: Wait for new RC release(handleErrorCauseZIO): ZIO.logErrorCause(s"Uncaught error: ${error.prettyPrint}", error) *>
-          Response.internalServerError("Ooops, something went wrong.")
-        }.toHttpApp @@ (Middleware.beautifyErrors ++ Middleware.debug),
+          Response(
+            Status.InternalServerError,
+            Headers.empty,
+            Body.fromString("Ooops, something went wrong."),
+          )
+        }.toHttpApp @@ Middleware.debug, // TODO: .when(Env == Dev)
       )
-      .provide(Server.defaultWith(_.logWarningOnFatalError(true).port(8080)))
+      .provide(Server.defaultWithPort(8080))
