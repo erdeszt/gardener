@@ -1,0 +1,15 @@
+body {
+    background-color: #e6ffd4;
+}
+
+nav {
+   background-color: #c2ff8a;
+}
+
+.nav-item .dropdown-menu {
+    background-color: #c2ff8a;
+}
+
+.nav-item .dropdown-item:hover {
+    background-color: #9eff60;
+}
