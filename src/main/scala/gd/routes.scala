@@ -50,12 +50,6 @@ case class InvalidStaticAssetExtensionError(extension: String)
       s"Invalid extension for static asset: ${extension}",
     )
 
-private def contentTypeFromExtension(
-    extension: String,
-): Either[InvalidStaticAssetExtensionError, MediaType] =
-  extension match
-    case "png" => Right(MediaType.image.png)
-
 private def getStaticAssetFromResource(
     path: String,
     mediaType: MediaType,
