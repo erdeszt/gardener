@@ -1,0 +1,27 @@
+# project
+!.scalafmt.conf
+
+# macOS
+.DS_Store
+
+# sbt specific
+target/
+
+# Bloop
+.bsp
+
+# VS Code
+.vscode/
+
+# Metals
+.bloop/
+.metals/
+metals.sbt
+
+# IDEA
+.idea
+.idea_modules
+/.worksheet/
+
+# Terraform
+**/.terraform/
