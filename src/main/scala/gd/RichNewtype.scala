@@ -1,0 +1,5 @@
+package gd
+
+class RichNewtype {
+
+}
