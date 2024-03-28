@@ -9,7 +9,7 @@ object Gardener extends ZIOAppDefault:
   override val run: Task[Unit] = for
     env <- EnvConfig.load.map(_.env)
     config <- AppConfig.load(env)
-    _ <- runMigrations
+    _ <- runMigrations(config.database)
     _ <- ZIO.logInfo(s"Running at port: ${config.port}")
     _ <- Server
       .serve(
@@ -27,16 +27,15 @@ object Gardener extends ZIOAppDefault:
   yield ()
 
   // TODO: Move to service, use config
-  private def runMigrations =
+  private def runMigrations(config: DatabaseConfig) =
     ZIO.attempt {
-      Class.forName("org.postgresql.Driver")
       val flyway =
         Flyway
           .configure()
           .dataSource(
-            "jdbc:postgresql://127.0.0.1:5432/postgres",
-            "postgres",
-            "dev",
+            s"jdbc:postgresql://${config.host}:${config.port}/${config.database}",
+            config.user,
+            config.password,
           )
           .load()
 
