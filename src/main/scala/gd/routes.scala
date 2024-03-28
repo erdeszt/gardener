@@ -43,7 +43,12 @@ val assets =
       },
   )
 
-val routes = pages ++ assets
+val apis = Routes(
+  Method.GET / "api" / "seed-companies" ->
+    handler(ZIO.succeed(Response.text("WAAT"))),
+)
+
+val routes = pages ++ assets ++ apis
 
 case class InvalidStaticAssetExtensionError(extension: String)
     extends RuntimeException(
