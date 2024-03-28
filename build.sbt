@@ -6,6 +6,7 @@ Compile / run / fork := true
 
 lazy val flywayVersion = "10.10.0"
 lazy val zioConfigVersion = "4.0.1"
+lazy val circeVersion = "0.14.6"
 
 lazy val root = (project in file("."))
   .settings(

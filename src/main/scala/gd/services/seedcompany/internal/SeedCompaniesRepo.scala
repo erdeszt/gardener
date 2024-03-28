@@ -1,4 +1,9 @@
-package gd.services.seedcompany
+package gd.services.seedcompany.internal
 
-trait SeedCompaniesRepo:
-  def list: Unit
+import zio.*
+import zio.jdbc.*
+
+import gd.services.seedcompany.model.SeedCompany
+
+private[seedcompany] trait SeedCompaniesRepo:
+  def list: URIO[ZConnection, Chunk[SeedCompany]]

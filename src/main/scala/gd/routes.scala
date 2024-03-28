@@ -4,6 +4,9 @@ import java.io.File
 
 import zio.*
 import zio.http.*
+import zio.json.*
+
+import gd.services.seedcompany.SeedCompanies
 
 val pages: Routes[Any, Nothing] = Routes(
   Method.GET / "" -> handler(Response.html(views.index)),
@@ -43,12 +46,23 @@ val assets =
       },
   )
 
-val apis = Routes(
+def apis(seedCompanies: SeedCompanies) = Routes(
   Method.GET / "api" / "seed-companies" ->
-    handler(ZIO.succeed(Response.text("WAAT"))),
+    handler(
+      seedCompanies.list
+        .map(companies => Response.json(companies.toJson))
+        .resurrect
+        .catchAll { e =>
+          {
+            println(s"e: ${e.printStackTrace()}")
+            ZIO.succeed(Response.json("asdf"))
+          }
+        },
+    ),
 )
 
-val routes = pages ++ assets ++ apis
+def routes(seedCompanies: SeedCompanies) =
+  pages ++ assets ++ apis(seedCompanies)
 
 case class InvalidStaticAssetExtensionError(extension: String)
     extends RuntimeException(

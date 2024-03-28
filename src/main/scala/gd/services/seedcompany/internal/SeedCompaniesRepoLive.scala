@@ -1,11 +1,16 @@
-package gd.services.seedcompany
+package gd.services.seedcompany.internal
 
-import gd.services.seedcompany.internal.SeedCompaniesRepo
-import gd.services.seedcompany.model.SeedCompany
+import java.util.UUID
+
+import zio.*
 import zio.jdbc.*
 
+import gd.services.seedcompany.model.SeedCompany
+
 class SeedCompaniesRepoLive extends SeedCompaniesRepo:
-  override def list: Unit =
+  override def list: URIO[ZConnection, Chunk[SeedCompany]] =
     sql"select id, name from seed_company"
-      .query[(SeedCompany.Id, SeedCompany.Name)]
+      .query[(UUID, String)]
+      .as[SeedCompany]
       .selectAll
+      .orDie
