@@ -2,32 +2,33 @@ package gd.services.seedcompany.model
 
 import java.util.UUID
 
+import com.github.f4b6a3.ulid.Ulid
+import zio.Chunk
 import zio.jdbc.*
 import zio.json.JsonCodec
 import zio.prelude.Newtype
 import zio.schema.Schema.Field
-import zio.schema.{DeriveSchema, Schema}
+import zio.schema.{DeriveSchema, Schema, StandardType}
 
 import gd.*
+import gd.interop.ulid.given
 
-// TODO: Use strong types
 case class SeedCompany(
-    id: UUID, //  SeedCompany.Id,
-    name: String, // SeedCompany.Name,
+    id: SeedCompany.Id,
+    name: SeedCompany.Name,
 )
 
 object SeedCompany:
-  object Id extends RichNewtype[UUID]
+  object Id extends NewtypeWithCodecs[Ulid]
   type Id = Id.Type
 
-  object Name extends RichNewtype[String]
+  object Name extends NewtypeWithCodecs[String]
   type Name = Name.Type
 
-  // TODO: Figure out why .fromSchema doesn't work (bounty?)
   given schema: Schema[SeedCompany] = DeriveSchema.gen
   given jdbcDecoder: JdbcDecoder[SeedCompany] =
-    JdbcDecoder[(UUID, String)].map(SeedCompany.apply) //  JdbcDecoder.fromSchema
-  given jdbcEncoder: JdbcEncoder[SeedCompany] = JdbcEncoder[(UUID, String)]
-    .contramap(company => (company.id, company.name)) // JdbcEncoder.fromSchema
+    JdbcDecoder[(Id, Name)].map(SeedCompany.apply)
+  given jdbcEncoder: JdbcEncoder[SeedCompany] =
+    JdbcEncoder[(Id, Name)].contramap(company => (company.id, company.name))
   given jsonCodec: JsonCodec[SeedCompany] =
     zio.schema.codec.JsonCodec.jsonCodec(schema)
